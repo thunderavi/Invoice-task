@@ -189,6 +189,9 @@ export async function PATCH(req) {
       'Void'
     ];
 
+    // Debugging log to check the incoming status
+    console.log("Incoming status:", status);
+
     if (status && !validStatuses.includes(status)) {
       return NextResponse.json({ error: "Invalid status provided." }, { status: 400 });
     }
@@ -220,3 +223,4 @@ export async function PATCH(req) {
     return NextResponse.json({ error: "Internal server error." }, { status: 500 });
   }
 }
+
