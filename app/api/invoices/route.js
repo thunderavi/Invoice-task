@@ -113,7 +113,7 @@ export async function DELETE(req) {
     const vendor_name = url.searchParams.get("vendor_name");
     const invoice_number = url.searchParams.get("invoice_number");
 
-    // Check if at least one parameter is provided
+    // Ensure at least one parameter is provided for deletion
     if (!id && !vendor_name && !invoice_number) {
       return NextResponse.json(
         { error: "Please provide 'id', 'vendor_name', or 'invoice_number' to delete." },
@@ -121,16 +121,16 @@ export async function DELETE(req) {
       );
     }
 
-    // Build the query based on provided parameters
+    // Build the query based on the provided parameters
     const query = {};
     if (id) query._id = id; // Delete by ID
     if (vendor_name) query.vendor_name = { $regex: vendor_name, $options: "i" }; // Delete by vendor name (case-insensitive)
     if (invoice_number) query.invoice_number = invoice_number; // Delete by invoice number
 
     // Find and delete the matching invoice(s)
-    const result = await Invoice.deleteMany(query);
+    const result = await Invoice.deleteOne(query); // Use deleteOne to delete only one invoice
 
-    // Check if any invoices were deleted
+    // If no invoice was deleted, return a 404 response
     if (result.deletedCount === 0) {
       return NextResponse.json(
         { message: "No matching invoices found to delete." },
@@ -139,7 +139,7 @@ export async function DELETE(req) {
     }
 
     return NextResponse.json(
-      { message: "Invoice(s) deleted successfully.", deletedCount: result.deletedCount },
+      { message: "Invoice deleted successfully.", deletedCount: result.deletedCount },
       { status: 200 }
     );
   } catch (err) {
@@ -147,6 +147,7 @@ export async function DELETE(req) {
     return NextResponse.json({ error: "Internal server error." }, { status: 500 });
   }
 }
+
 
 export async function PATCH(req) {
   try {

@@ -68,17 +68,16 @@ export default function Dashboard() {
   };
   
   const handleApplyAction = async () => {
-    // Ensure the status field is valid before proceeding
-    if (!updatedInvoice.status || !['Open', 'Awaiting Approval', 'Paid', 'Rejected'].includes(updatedInvoice.status)) {
+    // Ensure the status field is valid before proceeding (only for "Update")
+    if (selectedAction === "Update" && (!updatedInvoice.status || !['Open', 'Awaiting Approval', 'Paid', 'Rejected'].includes(updatedInvoice.status))) {
       alert("Please select a valid status.");
       return;
     }
   
     if (selectedAction === "Update" && updatedInvoice) {
       try {
-        // Ensure the invoice ID is present for the update
         const updatedData = { ...updatedInvoice, id: selectedInvoice._id };
-        
+  
         const response = await fetch(`/api/invoices?id=${selectedInvoice._id}`, {
           method: "PATCH",
           headers: {
@@ -88,6 +87,7 @@ export default function Dashboard() {
         });
   
         const result = await response.json();
+        console.log(result);  // Debug the response from the server
         if (result.message === "Invoice updated successfully.") {
           setInvoices(
             invoices.map((invoice) =>
@@ -103,8 +103,31 @@ export default function Dashboard() {
         console.error("Error updating invoice:", error);
         alert("Error updating invoice.");
       }
+    } else if (selectedAction === "Delete" && selectedInvoice) {
+      try {
+        const response = await fetch(`/api/invoices?id=${selectedInvoice._id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+  
+        const result = await response.json();
+        console.log(result);  // Debug the response from the server
+        if (result.message === "Invoice deleted successfully.") {
+          setInvoices(invoices.filter((invoice) => invoice._id !== selectedInvoice._id));
+          alert("Invoice deleted successfully.");
+        } else {
+          alert("Error deleting invoice.");
+        }
+      } catch (error) {
+        console.error("Error deleting invoice:", error);
+        alert("Error deleting invoice.");
+      }
     }
   };
+  
+  
   
   return (
     <div className="flex h-screen overflow-hidden">

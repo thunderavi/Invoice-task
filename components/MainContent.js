@@ -20,7 +20,7 @@ const MainContent = ({
   const [searchType, setSearchType] = useState("vendor_name");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredInvoices = invoices.filter((invoice) => {
+  const filteredInvoices = Array.isArray(invoices) ? invoices.filter((invoice) => {
     if (searchType === "vendor_name") {
       return invoice.vendor_name
         .toLowerCase()
@@ -31,7 +31,8 @@ const MainContent = ({
         .includes(searchQuery.toLowerCase());
     }
     return true;
-  });
+  }) : [];  // Default to an empty array if invoices is not an array
+  
 
   // Function to get the correct class for status coloring
   const getStatusClass = (status) => {
