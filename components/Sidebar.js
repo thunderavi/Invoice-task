@@ -1,71 +1,85 @@
 import React, { useState } from "react";
-import { FaUser, FaFileInvoice, FaCog } from "react-icons/fa"; // Importing icons for the sidebar
-import AdminForm from './AdminForm'; // Import AdminForm here
+import {
+  FaFileInvoice,
+  FaBars,
+  FaTimes,
+  FaCog,
+  FaBox,
+  FaTachometerAlt,
+} from "react-icons/fa"; // Importing icons for the sidebar
 
 const Sidebar = ({ onCreateInvoiceClick }) => {
-  const [showAdminForm, setShowAdminForm] = useState(false); // State to control the display of AdminForm
-  const [profileName, setProfileName] = useState("Avi Ranjan"); // State to store the username
-  const [profileRole, setProfileRole] = useState("Admin"); // State to store the profile role
-  const [savedData, setSavedData] = useState(null); // State to store saved form data
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // State for toggling sidebar visibility on mobile
 
-  const handleProfileClick = () => {
-    setShowAdminForm(!showAdminForm); // Toggle the visibility of the AdminForm
-  };
-
-  const handleSave = (username, role) => {
-    setProfileName(username); // Update profile name with the new username
-    setProfileRole(role); // Update the profile role with the new role
-    setShowAdminForm(false); // Close the form after saving
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen); // Toggle the sidebar visibility
   };
 
   return (
-    <div className="w-64 bg-gray-900 text-white flex flex-col h-screen shadow-lg">
-      {/* Header Section */}
-      <div className="p-6 text-3xl font-bold border-b border-gray-700 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <FaFileInvoice className="text-blue-500" />
-          <span>Finifi</span>
-        </div>
-      </div>
-
-      {/* Profile Section */}
-      <div className="p-4 flex items-center space-x-3 border-b border-gray-700 cursor-pointer">
-        <FaUser className="text-xl" />
-        <div>
-          <span className="font-semibold">{profileName}</span>
-          <p className="text-sm text-gray-400">{profileRole}</p> {/* Display role */}
-        </div>
-      </div>
-
-      {/* Navigation Links */}
-      <div className="mt-4 space-y-2 px-4">
-        <button
-          onClick={onCreateInvoiceClick}
-          className="w-full px-4 py-2 text-left bg-blue-600 hover:bg-blue-700 rounded-lg text-white flex items-center space-x-2"
-        >
-          <FaFileInvoice />
-          <span>Create Invoice</span>
-        </button>
-        {/* Button to Edit Profile */}
-        <button
-          onClick={handleProfileClick}
-          className="w-full px-4 py-2 text-left hover:bg-gray-700 rounded-lg flex items-center space-x-2"
-        >
-          <FaUser />
-          <span>Edit Profile</span>
+    <div className="relative">
+      {/* Hamburger Menu Icon (Visible only on small screens) */}
+      <div className="lg:hidden absolute top-4 left-4">
+        <button onClick={toggleSidebar} className="text-white">
+          {isSidebarOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
         </button>
       </div>
 
-      {/* Conditional Rendering of AdminForm Below the "Edit Profile" Button */}
-      {showAdminForm && (
-        <div className="p-4 bg-gray-800 border-t border-gray-700">
-          <AdminForm savedData={savedData} setSavedData={setSavedData} onSave={handleSave} />
+      {/* Sidebar */}
+      <div
+        className={`w-48 bg-gradient-to-r from-white to-blue-50 text-gray-800 flex flex-col h-screen shadow-lg transition-all duration-300 ease-in-out 
+          ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } lg:translate-x-0 rounded-l-lg`}
+      >
+        {/* Header Section */}
+        <div className="p-6 text-xl font-bold bg-blue-50 text-gray-800 flex items-center justify-between rounded-t-lg">
+          <div className="flex items-center space-x-2">
+            <FaFileInvoice className="text-blue-500" />
+            <span>Finifi</span>
+          </div>
         </div>
-      )}
 
-      {/* Footer Section */}
-      <div className="mt-auto p-4 text-center text-sm text-gray-400 border-t border-gray-700">
-        <p>© 2025 Finifi. All rights reserved.</p>
+        {/* Navigation Links */}
+        <div className="mt-4 space-y-2 pl-4 ">
+          {" "}
+          {/* Added padding-left here */}
+          <button
+            onClick={onCreateInvoiceClick}
+            className="w-full px-4 py-2 text-left bg-blue-500 text-white flex items-center space-x-2 rounded-none shadow-none transform transition-all duration-200 ease-in-out hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 pr-8" // Added pr-8 for more right padding
+          >
+            <FaFileInvoice />
+            <span className="text-sm">Create Invoice</span>
+          </button>
+          {/* Dashboard Link with left curve */}
+          <button
+            onClick={() => alert("Dashboard Clicked")}
+            className="w-full px-4 py-2 text-left bg-[#1D3557]  rounded-l-2xl text-white flex items-center space-x-2 transition duration-300 ease-in-out transform hover:scale-105"
+          >
+            <FaTachometerAlt />
+            <span className="text-sm">Dashboard</span>
+          </button>
+          {/* Vendor Link */}
+          <button
+            onClick={() => alert("Vendor Clicked")}
+            className="w-full px-4 py-2 text-left hover:bg-blue-200 rounded-none flex items-center space-x-2 transition duration-300 ease-in-out transform hover:scale-105"
+          >
+            <FaBox />
+            <span className="text-sm">Vendor</span>
+          </button>
+          {/* Settings Link */}
+          <button
+            onClick={() => alert("Settings Clicked")}
+            className="w-full px-4 py-2 text-left hover:bg-blue-200 rounded-none flex items-center space-x-2 transition duration-300 ease-in-out transform hover:scale-105"
+          >
+            <FaCog />
+            <span className="text-sm">Settings</span>
+          </button>
+        </div>
+
+        {/* Footer Section */}
+        <div className="mt-auto p-4 text-center text-xs text-gray-500">
+          <p>© 2025 Finifi. All rights reserved.</p>
+        </div>
       </div>
     </div>
   );
