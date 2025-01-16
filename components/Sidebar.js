@@ -7,6 +7,7 @@ import {
   FaBox,
   FaTachometerAlt,
 } from "react-icons/fa"; // Importing icons for the sidebar
+import Image from "next/image"; // Importing the Image component from Next.js
 
 const Sidebar = ({ onCreateInvoiceClick }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // State for toggling sidebar visibility on mobile
@@ -27,21 +28,25 @@ const Sidebar = ({ onCreateInvoiceClick }) => {
       {/* Sidebar */}
       <div
         className={`w-48 bg-gradient-to-r from-white to-blue-50 text-gray-800 flex flex-col h-screen shadow-lg transition-all duration-300 ease-in-out 
-          ${
-            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } lg:translate-x-0 rounded-l-lg`}
+          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 rounded-l-lg`}
       >
         {/* Header Section */}
         <div className="p-6 text-xl font-bold bg-blue-50 text-gray-800 flex items-center justify-between rounded-t-lg">
-          <div className="flex items-center space-x-2">
-            <FaFileInvoice className="text-blue-500" />
-            <span>Finifi</span>
-          </div>
-        </div>
+        <div className="flex items-center space-x-2 pl-4">
+  <Image 
+    src="/logo.jpg" // Path to the logo icon image
+    alt="Finifi Logo"
+    width={100} // Increased width
+    height={64} // Increased height
+    className="object-contain" // Ensures the image is not distorted
+  />
+</div>
+
+</div>
+
 
         {/* Navigation Links */}
-        <div className="mt-4 space-y-2 pl-4 ">
-          {" "}
+        <div className="mt-4 space-y-2 pl-4">
           {/* Added padding-left here */}
           <button
             onClick={onCreateInvoiceClick}
