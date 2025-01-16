@@ -1,4 +1,3 @@
-// MainContent.js
 import React, { useState } from "react";
 import Fillvoice from "./fillvoice";
 
@@ -19,6 +18,7 @@ const MainContent = ({
 }) => {
   const [searchType, setSearchType] = useState("vendor_name");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedInv, setSelectedInv] = useState([]);
 
   const filteredInvoices = Array.isArray(invoices)
     ? invoices.filter((invoice) => {
@@ -35,7 +35,6 @@ const MainContent = ({
       })
     : []; // Default to an empty array if invoices is not an array
 
-  // Function to get the correct class for status coloring
   const getStatusClass = (status) => {
     switch (status) {
       case "Open":
@@ -60,7 +59,21 @@ const MainContent = ({
         return "bg-white text-gray-600 px-4 py-2 w-full text-center";
     }
   };
-  
+
+  // Checkbox Logic
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedInv(filteredInvoices.map((invoice) => invoice._id));
+    } else {
+      setSelectedInv([]);
+    }
+  };
+
+  const handleRowSelection = (id) => {
+    setSelectedInv((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
 
   return (
     <div className="flex-1 bg-gray-100 p-6 overflow-auto">
@@ -78,44 +91,51 @@ const MainContent = ({
         </div>
       )}
 
-     <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8"> {/* Reduced py-6 to py-4 */}
-  <div className="flex justify-between items-center">
-    <h1 className="text-2xl font-bold tracking-tight text-left"> {/* Reduced text size */}
-      Manage Invoices
-    </h1>
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        {" "}
+        {/* Reduced py-6 to py-4 */}
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold tracking-tight text-left">
+            {" "}
+            {/* Reduced text size */}
+            Manage Invoices
+          </h1>
 
-    <div className="flex items-center space-x-4">
-      {/* Bell Icon */}
-      <div className="relative">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-gray-900" 
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M15 17h5l-1.405-1.405a2 2 0 00-.395-2.52l.857-1.707A6.99 6.99 0 0012 4a6.99 6.99 0 00-7.056 7.368l.857 1.707a2 2 0 00-.395 2.52L4 17h5m1 0v3a2 2 0 004 0v-3m-2 0H8"
-          />
-        </svg>
-      </div>
-      {/* Random Person Circle */}
-      <div className="flex items-center space-x-2">
-        <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-white"> {/* Circle size remains the same */}
-          <span className="text-xs">RP</span>
+          <div className="flex items-center space-x-4">
+            {/* Bell Icon */}
+            <div className="relative">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-gray-900"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 17h5l-1.405-1.405a2 2 0 00-.395-2.52l.857-1.707A6.99 6.99 0 0012 4a6.99 6.99 0 00-7.056 7.368l.857 1.707a2 2 0 00-.395 2.52L4 17h5m1 0v3a2 2 0 004 0v-3m-2 0H8"
+                />
+              </svg>
+            </div>
+            {/* Random Person Circle */}
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-white">
+                {" "}
+                {/* Circle size remains the same */}
+                <span className="text-xs">RP</span>
+              </div>
+              <div className="text-xs">
+                {" "}
+                {/* Reduced text size */}
+                <p className="font-semibold">John Doe</p>
+                <p className="text-gray-500">johndoe@gmail.com</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="text-xs"> {/* Reduced text size */}
-          <p className="font-semibold">John Doe</p>
-          <p className="text-gray-500">johndoe@gmail.com</p>
-        </div>
       </div>
-    </div>
-  </div>
-</div>
-
 
       {/* Grey Line */}
       <hr className="border-t border-gray-300 my-4" />
@@ -197,12 +217,29 @@ const MainContent = ({
 
           {/* Dashboard content */}
           {loading ? (
-            <div>Loading...</div>
+            <div className="flex items-center justify-center h-screen w-screen bg-white bg-opacity-80 fixed inset-0 z-50">
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 border-4 border-t-4 border-blue-500 border-opacity-50 rounded-full animate-spin"></div>
+              <p className="mt-4 text-blue-500 font-medium">Loading...</p>
+            </div>
+          </div>
+        
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-aut">
               <table className="min-w-full bg-white shadow rounded overflow-hidden">
                 <thead className="bg-blue-50 text-gray-600 uppercase text-xs">
                   <tr>
+                    <th className="p-4 text-center whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox"
+                        onChange={handleSelectAll}
+                        checked={
+                          selectedInv.length === filteredInvoices.length &&
+                          filteredInvoices.length > 0
+                        }
+                      />
+                    </th>
                     <th className="text-left p-4 whitespace-nowrap">
                       Vendor Name
                     </th>
@@ -232,110 +269,163 @@ const MainContent = ({
                 </thead>
 
                 <tbody>
-                {filteredInvoices.map((invoice) => (
-  <React.Fragment key={invoice._id}>
-    <tr className="border-t border-gray-200 hover:bg-gray-100">
-      <td className="p-2 text-xs text-center whitespace-nowrap">{invoice.vendor_name}</td>
-      <td className="p-2 text-xs text-center whitespace-nowrap">{invoice.invoice_number}</td>
-      <td className="p-2 text-xs text-center whitespace-nowrap">
-        <button
-          className={`px-4 py-2 rounded-md focus:outline-none ${getStatusClass(invoice.status)}`}
-        >
-          {invoice.status}
-        </button>
-      </td>
-      <td className="p-2 text-xs text-center whitespace-nowrap">{`$${invoice.net_amount}`}</td>
-      <td className="p-2 text-xs text-center whitespace-nowrap">{invoice.invoice_date}</td>
-      <td className="p-2 text-xs text-center whitespace-nowrap">{invoice.due_date}</td>
-      <td className="p-2 text-xs text-center whitespace-nowrap">{invoice.department}</td>
-      <td className="p-2 text-xs text-center whitespace-nowrap">{invoice.po_number}</td>
-      <td className="p-2 text-xs text-center whitespace-nowrap">
-        <select
-          className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200"
-          value={selectedInvoice?._id === invoice._id ? selectedAction : ""}
-          onChange={(e) => handleActionChange(e, invoice)}
-        >
-          <option value="">Action</option>
-          <option value="Update">Update</option>
-          <option value="Delete">Delete</option>
-        </select>
-        <button
-          onClick={handleApplyAction}
-          className="ml-2 px-8 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded shadow"
-        >
-          Apply
-        </button>
-      </td>
-    </tr>
-  
+                  {filteredInvoices.map((invoice) => (
+                    <React.Fragment key={invoice._id}>
+                      <tr className="border-t border-gray-200 hover:bg-gray-100">
+                        <td className="p-2 text-center whitespace-nowrap">
+                          <input
+                            type="checkbox"
+                            className="form-checkbox"
+                            checked={selectedInv.includes(invoice._id)}
+                            onChange={() => handleRowSelection(invoice._id)}
+                          />
+                        </td>
+                        <td className="p-2 text-xs text-center whitespace-nowrap">
+                          {invoice.vendor_name}
+                        </td>
+                        <td className="p-2 text-xs text-center whitespace-nowrap">
+                          {invoice.invoice_number}
+                        </td>
+                        <td className="p-2 text-xs text-center whitespace-nowrap">
+                          <button
+                            className={`px-4 py-2 rounded-md focus:outline-none ${getStatusClass(
+                              invoice.status
+                            )}`}
+                          >
+                            {invoice.status}
+                          </button>
+                        </td>
+                        <td className="p-2 text-xs text-center whitespace-nowrap">{`$${invoice.net_amount}`}</td>
+                        <td className="p-2 text-xs text-center whitespace-nowrap">
+                          {invoice.invoice_date}
+                        </td>
+                        <td className="p-2 text-xs text-center whitespace-nowrap">
+                          {invoice.due_date}
+                        </td>
+                        <td className="p-2 text-xs text-center whitespace-nowrap">
+                          {invoice.department}
+                        </td>
+                        <td className="p-2 text-xs text-center whitespace-nowrap">
+                          {invoice.po_number}
+                        </td>
+                        <td className="p-2 text-xs text-center whitespace-nowrap">
+                          <select
+                            className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200"
+                            value={
+                              selectedInvoice?._id === invoice._id
+                                ? selectedAction
+                                : ""
+                            }
+                            onChange={(e) => handleActionChange(e, invoice)}
+                          >
+                            <option value="">Action</option>
+                            <option value="Update">Update</option>
+                            <option value="Delete">Delete</option>
+                          </select>
+                          <button
+                            onClick={handleApplyAction}
+                            className="ml-2 px-8 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded shadow"
+                          >
+                            Apply
+                          </button>
+                        </td>
+                      </tr>
 
                       {/* Conditionally render the update form for the selected invoice */}
                       {isEditing && selectedInvoice?._id === invoice._id && (
-  <tr className="border-t border-gray-200">
-    <td colSpan={9} className="p-4">
-      <div className="flex space-x-4 items-start">
-        <div className="w-full">
-          <form>
-            <div className="grid grid-cols-4 gap-4">
-              {Object.keys(updatedInvoice).map(
-                (key) =>
-                  key !== "_id" && (
-                    <div key={key} className="mb-4 text-sm">
-                      <label
-                        htmlFor={key}
-                        className="block text-gray-700 font-medium mb-1 text-xs"
-                      >
-                        {key.replace("_", " ").toUpperCase()}
-                      </label>
-                      {key === "status" ? (
-                        // Dropdown for 'status'
-                        <select
-                          id={key}
-                          value={updatedInvoice[key] || ""}
-                          onChange={(e) =>
-                            handleFieldChange(key, e.target.value)
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring focus:ring-blue-200"
-                        >
-                          <option value="">Select Status</option>
-                          <option value="Open">Open</option>
-                          <option value="Awaiting Approval">Awaiting Approval</option>
-                          <option value="Approved">Approved</option>
-                          <option value="Processing">Processing</option>
-                          <option value="Paid">Paid</option>
-                          <option value="Rejected">Rejected</option>
-                        </select>
-                      ) : (
-                        // For other fields, keep as text input
-                        <input
-                          id={key}
-                          type="text"
-                          value={updatedInvoice[key] || ""}
-                          onChange={(e) =>
-                            handleFieldChange(key, e.target.value)
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring focus:ring-blue-200"
-                        />
+                        <tr className="border-t border-gray-200">
+                          <td colSpan={9} className="p-4">
+                            <div className="flex space-x-4 items-start">
+                              <div className="w-full">
+                                <form>
+                                  <div className="grid grid-cols-4 gap-4">
+                                    {Object.keys(updatedInvoice).map(
+                                      (key) =>
+                                        key !== "_id" && (
+                                          <div
+                                            key={key}
+                                            className="mb-4 text-sm"
+                                          >
+                                            <label
+                                              htmlFor={key}
+                                              className="block text-gray-700 font-medium mb-1 text-xs"
+                                            >
+                                              {key
+                                                .replace("_", " ")
+                                                .toUpperCase()}
+                                            </label>
+                                            {key === "status" ? (
+                                              // Dropdown for 'status'
+                                              <select
+                                                id={key}
+                                                value={
+                                                  updatedInvoice[key] || ""
+                                                }
+                                                onChange={(e) =>
+                                                  handleFieldChange(
+                                                    key,
+                                                    e.target.value
+                                                  )
+                                                }
+                                                className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring focus:ring-blue-200"
+                                              >
+                                                <option value="">
+                                                  Select Status
+                                                </option>
+                                                <option value="Open">
+                                                  Open
+                                                </option>
+                                                <option value="Awaiting Approval">
+                                                  Awaiting Approval
+                                                </option>
+                                                <option value="Approved">
+                                                  Approved
+                                                </option>
+                                                <option value="Processing">
+                                                  Processing
+                                                </option>
+                                                <option value="Paid">
+                                                  Paid
+                                                </option>
+                                                <option value="Rejected">
+                                                  Rejected
+                                                </option>
+                                              </select>
+                                            ) : (
+                                              // For other fields, keep as text input
+                                              <input
+                                                id={key}
+                                                type="text"
+                                                value={
+                                                  updatedInvoice[key] || ""
+                                                }
+                                                onChange={(e) =>
+                                                  handleFieldChange(
+                                                    key,
+                                                    e.target.value
+                                                  )
+                                                }
+                                                className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring focus:ring-blue-200"
+                                              />
+                                            )}
+                                          </div>
+                                        )
+                                    )}
+                                  </div>
+                                </form>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <button
+                                  onClick={handleApplyAction}
+                                  className="px-4 py-2 bg-blue-600 text-white rounded shadow text-xs"
+                                >
+                                  Save Changes
+                                </button>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
                       )}
-                    </div>
-                  )
-              )}
-            </div>
-          </form>
-        </div>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={handleApplyAction}
-            className="px-4 py-2 bg-blue-600 text-white rounded shadow text-xs"
-          >
-            Save Changes
-          </button>
-        </div>
-      </div>
-    </td>
-  </tr>
-)}
-
                     </React.Fragment>
                   ))}
                 </tbody>
